@@ -1,0 +1,25 @@
+{
+  "name": "Registro SASA-01 INEA",
+  "short_name": "SASA-01",
+  "description": "Captura móvil, firma digital e impresión calibrada del formato SASA-01 del INEA",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F4F4",
+  "theme_color": "#691C32",
+  "icons": [
+    {
+      "src": "/static/icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

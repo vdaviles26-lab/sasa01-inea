@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Registro SASA-01 | INEA</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#691C32">
+    <link rel="apple-touch-icon" href="/static/icono-192.png">
+    <style>
+        :root {
+            --guinda: #691C32;
+            --gris-oscuro: #333333;
+            --gris-claro: #F4F4F4;
+            --blanco: #FFFFFF;
+            --borde: #CCCCCC;
+        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { margin: 0; padding: 0; background-color: var(--gris-claro); color: var(--gris-oscuro); }
+        header {
+            background-color: var(--guinda);
+            color: var(--blanco);
+            padding: 14px 16px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        header h1 { margin: 0; font-size: 17px; letter-spacing: 0.5px; }
+        header p { margin: 3px 0 10px; font-size: 12px; opacity: 0.9; }
+        .tabs {
+            display: flex;
+            background: rgba(0,0,0,0.2);
+            margin: 0 -16px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.75);
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-btn.active {
+            color: var(--blanco);
+            border-bottom: 3px solid var(--blanco);
+            background: rgba(255,255,255,0.1);
+        }
+        .container { max-width: 720px; margin: 0 auto; padding: 12px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .card {
+            background: var(--blanco);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border-top: 4px solid var(--guinda);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            margin: 0 0 12px;
+            font-size: 14px;
+            color: var(--guinda);
+            border-bottom: 1px solid var(--gris-claro);
+            padding-bottom: 6px;
+            text-transform: uppercase;
+        }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+        .col { flex: 1; min-width: 140px; }
+        label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: var(--gris-oscuro); }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--borde);
+            border-radius: 6px;
+            font-size: 14px;
+            background: var(--blanco);
+        }
+        input:focus, select:focus { outline: none; border-color: var(--guinda); }
+        .canvas-box {
+            border: 2px dashed var(--gris-oscuro);
+            border-radius: 6px;
+            background: var(--blanco);
+            touch-action: none;
+            width: 100%;
+            height: 150px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 10px;
+            text-decoration: none;
+        }
+        .btn-primary { background-color: var(--guinda); color: var(--blanco); }
+        .btn-secondary { background-color: var(--gris-oscuro); color: var(--blanco); padding: 8px; font-size: 13px; }
+        .btn-outline { background-color: var(--blanco); color: var(--guinda); border: 2px solid var(--guinda); }
+        #statusMsg { text-align: center; font-weight: bold; margin: 12px 0; font-size: 14px; color: var(--guinda); }
+        .hist-item {
+            border-bottom: 1px solid var(--gris-claro);
+            padding: 12px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .hist-item:last-child { border-bottom: none; }
+        .hist-info strong { display: block; font-size: 14px; color: var(--gris-oscuro); }
+        .hist-info span { font-size: 12px; color: #666; }
+        .btn-sm {
+            background: var(--guinda);
+            color: var(--blanco);
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .search-bar { margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>FORMATO SASA-01 • INEA</h1>
+    <p>Automatización Territorial e Impresión Oficial</p>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="cambiarTab('captura', this)">1. Nueva Captura</button>
+        <button class="tab-btn" onclick="cambiarTab('historial', this)">2. Historial y Excel</button>
+    </div>
+</header>
+
+<div class="container">
+    <!-- PESTAÑA 1: FORMULARIO DE CAPTURA -->
+    <div id="tab-captura" class="tab-content active">
+        <form id="formSasa01">
+            <div class="card">
+                <h2>1. Coordinación y Fecha</h2>
+                <div class="row">
+                    <div class="col"><label>Coordinación de Zona</label><input type="text" name="coordinacion_zona" value="1518 MEXICALTZINGO"></div>
+                    <div class="col" style="max-width:75px;"><label>Día</label><input type="number" name="fecha_dia" placeholder="DD"></div>
+                    <div class="col" style="max-width:75px;"><label>Mes</label><input type="number" name="fecha_mes" placeholder="MM"></div>
+                    <div class="col" style="max-width:90px;"><label>Año</label><input type="number" name="fecha_anio" value="2026"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>2. Datos Generales</h2>
+                <div class="row">
+                    <div class="col"><label>Primer Apellido *</label><input type="text" name="primer_apellido" required></div>
+                    <div class="col"><label>Segundo Apellido</label><input type="text" name="segundo_apellido"></div>
+                </div>
+                <div class="row">
+                    <div class="col"><label>Nombre(s) *</label><input type="text" name="nombre" required></div>
+                    <div class="col"><label>RFE / CURP</label><input type="text" name="rfe"></div>
+                </div>
+                <div class="row">
+                    <div class="col" style="max-width:75px;"><label>Nac. Día</label><input type="number" name="nac_dia"></div>
+                    <div class="col" style="max-width:75px;"><label>Nac. Mes</label><input type="number" name="nac_mes"></div>
+                    <div class="col" style="max-width:90px;"><label>Nac. Año</label><input type="number" name="nac_anio"></div>
+                    <div class="col"><label>Sexo</label>
+                        <select name="sexo">
+                            <option value="Mujer">Mujer</option>
+                            <option value="Hombre">Hombre</option>
+                            <option value="No binario">No binario</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col"><label>Estado Civil</label>
+                        <select name="estado_civil">
+                            <option value="Soltero/a">Soltero/a</option>
+                            <option value="Casado/a">Casado/a</option>
+                            <option value="Concubino/a">Concubino/a</option>
+                            <option value="Separado/a">Separado/a</option>
+                            <option value="Divorciado/a">Divorciado/a</option>
+                            <option value="Viudo/a">Viudo/a</option>
+                        </select>
+                    </div>
+                    <div class="col" style="max-width:100px;"><label>Núm. Hijos</label><input type="number" name="num_hijos" value="0"></div>
+                    <div class="col"><label>Entidad Nacimiento</label><input type="text" name="entidad_nacimiento" value="MÉXICO"></div>
+                </div>
+                <div class="row">
+                    <div class="col"><label>¿Habla español?</label><select name="habla_espanol"><option value="Si">Sí</option><option value="No">No</option></select></div>
+                    <div class="col"><label>¿Lengua indígena?</label><select name="habla_lengua_indigena"><option value="No">No</option><option value="Si">Sí</option></select></div>
+                    <div class="col"><label>¿Cuál lengua?</label><input type="text" name="cual_lengua"></div>
+                </div>
+                <div class="row">
+                    <div class="col"><label>¿Se considera indígena?</label><select name="considera_indigena"><option value="No">No</option><option value="Si">Sí</option></select></div>
+                    <div class="col"><label>¿Afromexicano(a)?</label><select name="afrodescendiente"><option value="No">No</option><option value="Si">Sí</option></select></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>3. Domicilio y Contacto</h2>
+                <div class="row">
+                    <div class="col"><label>Tipo Vialidad</label>
+                        <select name="vialidad_tipo">
+                            <option value="CALLE">Calle</option>
+                            <option value="AVENIDA">Avenida</option>
+                            <option value="CALLEJÓN">Callejón</option>
+                            <option value="PRIVADA">Privada</option>
+                            <option value="ANDADOR">Andador</option>
+                            <option value="CARRETERA">Carretera</option>
+                            <option value="CAMINO">Camino</option>
+                        </select>
+                    </div>
+                    <div class="col"><label>Nombre Vialidad</label><input type="text" name="vialidad_nombre"></div>
+                </div>
+                <div class="row">
+                    <div class="col"><label>Núm. Ext</label><input type="text" name="num_ext"></div>
+                    <div class="col"><label>Núm. Int</label><input type="text" name="num_int"></div>
+                    <div class="col"><label>Tipo Asentamiento</label>
+                        <select name="asentamiento_tipo">
+                            <option value="COLONIA">Colonia</option>
+                            <option value="PUEBLO">Pueblo</option>
+                            <option value="FRACCIONAMIENTO">Fraccionamiento</option>
+                            <option value="EJIDO">Ejido</option>
+                            <option value="BARRIO">Barrio</option>
+                        </select>
+                    </div>
+                    <div class="col"><label>Nombre Asentamiento</label><input type="text" name="asentamiento_nombre"></div>
+                </div>
+                <div class="row">
+                    <div class="col"><label>Entre Vialidad 1</label><input type="text" name="entre_vialidad_1"></div>
+                    <div class="col"><label>Y Vialidad 2</label><input type="text" name="entre_vialidad_2"></div>
+                </div>
+                <div class="row">
+                    <div class="col" style="max-width:110px;"><label>C.P.</label><input type="number" name="cp"></div>
+                    <div class="col"><label>Localidad</label><input type="text" name="localidad"></div>
+                    <div class="col"><label>Municipio</label><input type="text" name="municipio"></div>
+                </div>
+                <div class="row">
+                    <div class="col"><label>Teléfono (10 dígitos)</label><input type="tel" name="telefono"></div>
+                    <div class="col"><label>Correo Personal</label><input type="email" name="correo_personal"></div>
+                </div>
+                <div class="row">
+                    <div class="col"><label>Acceso Cómputo</label><select name="acceso_computo"><option value="No">No</option><option value="Si">Sí</option></select></div>
+                    <div class="col"><label>Acceso Internet</label><select name="acceso_internet"><option value="No">No</option><option value="Si">Sí</option></select></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>4. Discapacidad, Ocupación y Nivel</h2>
+                <div class="row">
+                    <div class="col"><label>Discapacidad</label>
+                        <select name="discapacidad">
+                            <option value="No">No</option>
+                            <option value="Motriz">Física o motriz</option>
+                            <option value="Visual">Visual</option>
+                            <option value="Auditiva">Auditiva</option>
+                            <option value="Intelectual">Intelectual</option>
+                            <option value="Psicosocial">Psicosocial</option>
+                        </select>
+                    </div>
+                    <div class="col"><label>Ocupación</label>
+                        <select name="ocupacion">
+                            <option value="Quehaceres del hogar">Quehaceres del hogar</option>
+                            <option value="Comerciante">Comerciante</option>
+                            <option value="Obrero/a">Obrero/a</option>
+                            <option value="Trabajador/a agropecuario">Trabajador/a agropecuario</option>
+                            <option value="Estudiante">Estudiante</option>
+                            <option value="Desempleado/a">Desempleado/a</option>
+                            <option value="Jubilado/a">Jubilado/a</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col"><label>Antecedentes Escolares</label>
+                        <select name="antecedentes_escolares">
+                            <option value="Sin estudios">Sin estudios</option>
+                            <option value="Primaria">Primaria</option>
+                            <option value="Secundaria">Secundaria</option>
+                        </select>
+                    </div>
+                    <div class="col" style="max-width:100px;"><label>Grado</label><input type="text" name="grado_antecedente"></div>
+                    <div class="col"><label>Nivel al que Ingresa</label>
+                        <select name="nivel_ingreso">
+                            <option value="Alfabetización">Alfabetización</option>
+                            <option value="Primaria">Primaria</option>
+                            <option value="Secundaria">Secundaria</option>
+                            <option value="Alfabetización indígena bilingüe">Alfabetización indígena bilingüe</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col"><label>Servicio Educativo</label>
+                        <select name="servicio_educativo">
+                            <option value="Atención educativa">Atención educativa</option>
+                            <option value="Examen diagnóstico">Examen diagnóstico</option>
+                            <option value="Reconocimiento de saberes">Reconocimiento de saberes</option>
+                        </select>
+                    </div>
+                    <div class="col"><label>Unidad Operativa</label><input type="text" name="unidad_operativa"></div>
+                    <div class="col"><label>Círculo de Estudio</label><input type="text" name="circulo_estudio"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>5. Firmas y Talón Institucional</h2>
+                <div class="row">
+                    <div class="col"><label>Persona que Incorpora</label><input type="text" name="nombre_incorpora"></div>
+                    <div class="col"><label>Coordinador/a de Zona</label><input type="text" name="nombre_coordinador"></div>
+                </div>
+                <div class="row">
+                    <div class="col"><label>Correo INEA Asignado</label><input type="text" name="correo_inea"></div>
+                    <div class="col"><label>Contraseña INEA</label><input type="text" name="password_inea"></div>
+                </div>
+                <label>Firma o Huella Digital de la Persona Educanda (Dibuje en el recuadro):</label>
+                <canvas id="canvasFirma" class="canvas-box"></canvas>
+                <button type="button" class="btn btn-secondary" onclick="limpiarFirma()">Borrar Firma</button>
+            </div>
+
+            <button type="button" class="btn btn-outline" onclick="guardarOffline()">Guardar en Teléfono (Modo Offline)</button>
+            <button type="submit" class="btn btn-primary">Generar PDF Listo para Imprimir</button>
+            <div id="statusMsg"></div>
+        </form>
+    </div>
+
+    <!-- PESTAÑA 2: HISTORIAL Y EXPORTACIÓN CSV/EXCEL -->
+    <div id="tab-historial" class="tab-content">
+        <div class="card">
+            <h2>Exportación de Base de Datos</h2>
+            <p style="font-size: 13px; margin-top: 0;">Descarga todos los registros capturados en formato compatible con Microsoft Excel (.csv con codificación UTF-8).</p>
+            <a href="/exportar_csv" class="btn btn-primary">Descargar Base en Excel / CSV</a>
+        </div>
+
+        <div class="card">
+            <h2>Registros Capturados y Reimpresión</h2>
+            <div class="search-bar">
+                <input type="text" id="buscadorHistorial" placeholder="Buscar por nombre, apellido, RFE o municipio..." onkeyup="filtrarHistorial()">
+            </div>
+            <div id="listaHistorial">
+                <p style="font-size: 13px; color: #666;">Cargando registros...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let registrosGlobales = [];
+
+    function cambiarTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        btn.classList.add('active');
+        if (tabId === 'historial') {
+            cargarHistorial();
+        }
+    }
+
+    // Configuración de Firma Táctil en Canvas
+    const canvas = document.getElementById('canvasFirma');
+    const ctx = canvas.getContext('2d');
+    let dibujando = false;
+
+    function ajustarCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width > 0) {
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            ctx.strokeStyle = "#002395";
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = "round";
+        }
+    }
+    window.addEventListener('resize', ajustarCanvas);
+    ajustarCanvas();
+
+    function obtenerPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    canvas.addEventListener('mousedown', (e) => { dibujando = true; const p = obtenerPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+    canvas.addEventListener('mousemove', (e) => { if (!dibujando) return; const p = obtenerPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+    canvas.addEventListener('mouseup', () => { dibujando = false; });
+
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); dibujando = true; const p = obtenerPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, {passive: false});
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); if (!dibujando) return; const p = obtenerPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }, {passive: false});
+    canvas.addEventListener('touchend', () => { dibujando = false; });
+
+    function limpiarFirma() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function obtenerDatosFormulario() {
+        const formData = new FormData(document.getElementById('formSasa01'));
+        const datos = Object.fromEntries(formData.entries());
+        datos.firma_educanda = canvas.toDataURL('image/png');
+        return datos;
+    }
+
+    function guardarOffline() {
+        const datos = obtenerDatosFormulario();
+        const llave = `SASA01_${datos.primer_apellido}_${datos.nombre}_${Date.now()}`;
+        localStorage.setItem(llave, JSON.stringify(datos));
+        document.getElementById('statusMsg').innerText = "Registro guardado localmente en el teléfono.";
+    }
+
+    document.getElementById('formSasa01').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const status = document.getElementById('statusMsg');
+        status.innerText = "Generando PDF alineado...";
+        
+        try {
+            const datos = obtenerDatosFormulario();
+            const res = await fetch('/generar_sasa01', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+            const result = await res.json();
+            if (result.status === 'ok') {
+                status.innerText = "PDF listo y guardado en el historial.";
+                window.open(result.pdf_url, '_blank');
+            } else {
+                status.innerText = "Error: " + result.message;
+            }
+        } catch (err) {
+            status.innerText = "Sin conexión con el servidor. Usa 'Guardar en Teléfono'.";
+        }
+    });
+
+    async function cargarHistorial() {
+        const contenedor = document.getElementById('listaHistorial');
+        try {
+            const res = await fetch('/api/historial');
+            registrosGlobales = await res.json();
+            renderizarHistorial(registrosGlobales);
+        } catch (err) {
+            contenedor.innerHTML = '<p style="color:red; font-size:13px;">No se pudo conectar con el servidor para cargar el historial.</p>';
+        }
+    }
+
+    function renderizarHistorial(lista) {
+        const contenedor = document.getElementById('listaHistorial');
+        if (!lista.length) {
+            contenedor.innerHTML = '<p style="font-size:13px; color:#666;">Aún no hay registros generados en el servidor.</p>';
+            return;
+        }
+        contenedor.innerHTML = lista.map(r => `
+            <div class="hist-item">
+                <div class="hist-info">
+                    <strong>${(r.nombre || '').toUpperCase()} ${(r.primer_apellido || '').toUpperCase()} ${(r.segundo_apellido || '').toUpperCase()}</strong>
+                    <span>${r.nivel_ingreso || ''} • ${r.municipio || 'Sin municipio'} • ${r.fecha_captura || ''}</span>
+                </div>
+                <a href="${r.pdf_url}" target="_blank" class="btn-sm">Reimprimir PDF</a>
+            </div>
+        `).join('');
+    }
+
+    function filtrarHistorial() {
+        const q = document.getElementById('buscadorHistorial').value.toLowerCase();
+        const filtrados = registrosGlobales.filter(r =>
+            (r.nombre || '').toLowerCase().includes(q) ||
+            (r.primer_apellido || '').toLowerCase().includes(q) ||
+            (r.segundo_apellido || '').toLowerCase().includes(q) ||
+            (r.rfe || '').toLowerCase().includes(q) ||
+            (r.municipio || '').toLowerCase().includes(q)
+        );
+        renderizarHistorial(filtrados);
+    }
+    // Registrar Service Worker para soporte PWA y PWABuilder
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW error:', err));
+        });
+    }
+</script>
+</body>
+</html>
